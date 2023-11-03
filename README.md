@@ -30,3 +30,19 @@ API повинен мати змогу отримати список конта�
 Підтримка зберігання дати народження контакту
 Надання документів для API
 Використання модуля перевірки достовірності даних Pydantic
+
+КОМАНДИ:
+
+poetry init
+poetry shell
+poetry add fastapi
+poetry add uvicorn[standard]
+poetry add sqlalchemy
+poetry add psycopg2
+poetry add alembic
+
+alembic init migrations
+alembic revision --autogenerate -m 'Init'
+alembic upgrade head
+poetry add pydantic
+uvicorn main:app --host localhost --port 8000 --reload
