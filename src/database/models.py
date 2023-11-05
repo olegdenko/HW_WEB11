@@ -1,3 +1,4 @@
+import email
 from sqlalchemy import Column, Integer, String, Boolean, func, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
@@ -19,10 +20,22 @@ class Note(Base):
     __tablename__ = "notes"
     id = Column(Integer, primary_key=True)
     title = Column(String(50), nullable=False)
-    created_at = Column('created_at', DateTime, default=func.now())
+    created_at = Column("created_at", DateTime, default=func.now())
     description = Column(String(150), nullable=False)
     done = Column(Boolean, default=False)
     tags = relationship("Tag", secondary=note_m2m_tag, backref="notes")
+
+
+class Contact(Base):
+    __tablename__ = "contacts"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    e_mail = Column(String(50), nullable=False)
+    phone_number = Column(String(17), nullable=False)
+    born_date = Column(DateTime, nullable=False)
+    description = Column(String(150), nullable=False)
+    created_at = Column("created_at", DateTime, default=func.now())
 
 
 class Tag(Base):

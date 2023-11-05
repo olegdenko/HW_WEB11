@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 import pathlib
-from src.routes import notes, tags
+from src.routes import notes, tags, contacts
 
 app = FastAPI()
 
-app.include_router(tags.router, prefix="/api")
-app.include_router(notes.router, prefix="/api")
+# app.include_router(tags.router, prefix="/api")
+# app.include_router(notes.router, prefix="/api")
+app.include_router(contacts.router, prefix="/api")
 
 favicon_path = "favicon/favicon.ico"
 
