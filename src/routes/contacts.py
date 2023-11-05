@@ -49,7 +49,11 @@ async def search_contact(
 
 @router.get("/upcoming_birthdays", response_model=List[ContactResponse])
 async def read_upcoming_birthdays(db: Session = Depends(get_db)):
-    contacts = repository_contacts.get_upcoming_birthdays(db)
+    contacts = await repository_contacts.get_upcoming_birthdays(db)
+    if contacts is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Contacts not found"
+        )
     return contacts
 
 
