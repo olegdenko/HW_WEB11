@@ -1,11 +1,16 @@
 from fastapi import HTTPException
-from datetime import datetime, timedelta
+from datetime import date, timedelta, datetime
 from typing import List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from src.database.models import Contact
-from src.schemas import ContactModel, ContactUpdate, ContactStatusUpdate
+from src.schemas import (
+    ContactModel,
+    ContactUpdate,
+    ContactStatusUpdate,
+    ContactResponse,
+)
 
 
 async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
@@ -76,15 +81,28 @@ async def create_contact(body: ContactModel, db: Session) -> Contact:
             last_name=body.last_name,
             e_mail=body.e_mail,
             phone_number=body.phone_number,
-            born_date=datetime.strptime(body.born_date, "%d-%m-%Y"),
+            born_date=body.born_date,
             description=body.description,
         )
         db.add(contact)
         db.commit()
         db.refresh(contact)
-    except Exception:
-        raise HTTPException(status_code=409)
-    return contact
+
+        return ContactResponse(
+            id=contact.id,
+            name=contact.name,
+            last_name=contact.last_name,
+            e_mail=contact.e_mail,
+            phone_number=contact.phone_number,
+            born_date=contact.born_date,
+            description=contact.description,
+            created_at=contact.created_at,
+        )
+        # except Exception:
+    except Exception as e:
+        print(f"Error: {e}")
+        raise HTTPException(status_code=409, detail="Conflict: Something went wrong")
+        # return contact
 
 
 async def remove_contact(contact_id: int, db: Session) -> Contact | None:

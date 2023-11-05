@@ -1,8 +1,7 @@
-import email
 from sqlalchemy import Column, Integer, String, Boolean, func, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import Date, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -33,7 +32,7 @@ class Contact(Base):
     last_name = Column(String(50), nullable=False)
     e_mail = Column(String(50), nullable=False)
     phone_number = Column(String(17), nullable=False)
-    born_date = Column(DateTime, nullable=False)
+    born_date = Column(String, nullable=False)
     description = Column(String(150), nullable=False)
     created_at = Column("created_at", DateTime, default=func.now())
 

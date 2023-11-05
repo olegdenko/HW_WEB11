@@ -5,8 +5,24 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import pathlib
+import configparser
+
 from src.database.models import Base
-from src.database.db import SQLALCHEMY_DATABASE_URL
+
+
+file_config = pathlib.Path(__file__).parent.parent.joinpath("src/conf/config.ini")
+config = configparser.ConfigParser()
+config.read(file_config)
+
+db = config.get("DEV_DB", "DB")
+username = config.get("DEV_DB", "USER")
+password = config.get("DEV_DB", "PASSWORD")
+domain = config.get("DEV_DB", "DOMAIN")
+port = config.get("DEV_DB", "PORT")
+database = config.get("DEV_DB", "DB_NAME")
+
+URI = f"{db}://{username}:{password}@{domain}:{port}/{database}"
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -41,7 +57,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url", SQLALCHEMY_DATABASE_URL)
+    url = config.get_main_option("sqlalchemy.url", URI)
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -67,9 +83,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
