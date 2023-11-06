@@ -1,23 +1,33 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, FileResponse
 import pathlib
 from src.routes import notes, tags, contacts
+from src.routes.contacts import router as contacts_router
 
 app = FastAPI()
 
 # app.include_router(tags.router, prefix="/api")
 # app.include_router(notes.router, prefix="/api")
-app.include_router(contacts.router, prefix="/api")
+app.include_router(contacts.router, prefix="/contacts")
 
-favicon_path = "favicon/favicon.ico"
+templates = Jinja2Templates(directory="src/templates")
 
+app.include_router(contacts_router)
 
-@app.get("favicon.ico")
-def get_favicon(file: pathlib.Path):
-    with open(file):
-        file.read_bytes()
-    return {"message": "Hello World"}
+favicon_path = pathlib.Path("favicon/favicon.ico")
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+@app.get("/favicon.ico", response_class=FileResponse)
+def get_favicon():
+    return favicon_path
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+
+# @app.get("/")
+# def read_root():
+#     return {"message": "Hello World"}

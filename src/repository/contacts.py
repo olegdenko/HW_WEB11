@@ -13,6 +13,10 @@ from src.schemas import (
 )
 
 
+async def get_contact(contact_id: int, db: Session) -> Contact:
+    return db.query(Contact).filter(Contact.id == contact_id).first()
+
+
 async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
     return db.query(Contact).offset(skip).limit(limit).all()
 
@@ -37,10 +41,6 @@ async def get_upcoming_birthdays(db: Session) -> List[ContactResponse]:
         )
         for contact in contacts
     ]
-
-
-async def get_contact(contact_id: int, db: Session) -> Contact:
-    return db.query(Contact).filter(Contact.id == contact_id).first()
 
 
 async def search_contacts(

@@ -1,9 +1,8 @@
 from typing import List
-from fastapi.templating import Jinja2Templates
 
 from fastapi import APIRouter, HTTPException, Depends, status
+
 from sqlalchemy.orm import Session
-from src.database.models import Contact
 from src.database.db import get_db
 from src.schemas import (
     ContactModel,
@@ -32,7 +31,7 @@ async def read_contact(contact_id: int, db: Session = Depends(get_db)):
     return contact
 
 
-@router.get("/search/", response_model=List[ContactResponse])
+@router.get("/search_by/", response_model=List[ContactResponse])
 async def search_contact(
     name: str = None,
     last_name: str = None,
@@ -72,18 +71,6 @@ async def update_contact(
             status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found"
         )
     return contact
-
-
-# @router.patch("/{contact_id}", response_model=ContactResponse)
-# async def update_status_contact(
-#     body: ContactStatusUpdate, contact_id: int, db: Session = Depends(get_db)
-# ):
-#     contact = await repository_contacts.update_status_contact(contact_id, body, db)
-#     if contact is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND, detail="Contact not found"
-#         )
-#     return contact
 
 
 @router.delete("/{contact_id}", response_model=ContactResponse)
