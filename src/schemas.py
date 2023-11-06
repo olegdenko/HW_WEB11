@@ -1,6 +1,17 @@
 from datetime import datetime
-from typing import List, Optional
+from datetime import date
+from typing import List, Type
 from pydantic import BaseModel, Field, EmailStr
+
+
+class DateModel(BaseModel):
+    date: date
+
+    def json_schema(self):
+        schema = super().json_schema()
+        if "PlainValidatorFunctionSchema" in schema.get("type", ""):
+            schema = None
+        return schema
 
 
 class TagModel(BaseModel):
@@ -24,7 +35,7 @@ class ContactBase(BaseModel):
     last_name: str = Field(max_length=50)
     e_mail: EmailStr
     phone_number: str = Field(max_length=20)
-    born_date: str = Field(max_length=20)
+    born_date: DateModel
     description: str = Field(max_length=150)
 
 
@@ -33,7 +44,7 @@ class NoteModel(NoteBase):
 
 
 class ContactModel(ContactBase):
-    pass
+    born_date: date
 
 
 class NoteUpdate(NoteModel):
@@ -63,8 +74,9 @@ class NoteResponse(NoteBase):
 
 class ContactResponse(ContactBase):
     id: int
-    created_at: datetime
-    # tags: List[TagResponse]
-
-    class Config:
-        from_attributes = True
+    name: str
+    last_name: str
+    e_mail: str
+    phone_number: str
+    born_date: date
+    description: str

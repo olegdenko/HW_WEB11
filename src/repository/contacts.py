@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from datetime import date, timedelta, datetime
+from datetime import timedelta, datetime
 from typing import List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
@@ -17,7 +17,7 @@ async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
     return db.query(Contact).offset(skip).limit(limit).all()
 
 
-async def get_upcoming_birthdays(db: Session) -> List[Contact]:
+async def get_upcoming_birthdays(db: Session) -> List[ContactResponse]:
     today = datetime.now()
     end_date = today + timedelta(days=7)
     return (
@@ -27,19 +27,8 @@ async def get_upcoming_birthdays(db: Session) -> List[Contact]:
     )
 
 
-async def get_contact(
-    contact_id: int, name: str, last_name: str, e_mail: str, db: Session
-) -> Contact:
-    return (
-        db.query(Contact)
-        .filter(
-            Contact.id == contact_id,
-            Contact.name == name,
-            Contact.last_name == last_name,
-            Contact.e_mail == e_mail,
-        )
-        .first()
-    )
+async def get_contact(contact_id: int, db: Session) -> Contact:
+    return db.query(Contact).filter(Contact.id == contact_id).first()
 
 
 async def search_contacts(
@@ -74,7 +63,7 @@ async def search_contacts(
     return contacts
 
 
-async def create_contact(body: ContactModel, db: Session) -> Contact:
+async def create_contact(body: ContactModel, db: Session) -> ContactResponse:
     try:
         contact = Contact(
             name=body.name,
@@ -96,13 +85,10 @@ async def create_contact(body: ContactModel, db: Session) -> Contact:
             phone_number=contact.phone_number,
             born_date=contact.born_date,
             description=contact.description,
-            created_at=contact.created_at,
         )
-        # except Exception:
     except Exception as e:
         print(f"Error: {e}")
         raise HTTPException(status_code=409, detail="Conflict: Something went wrong")
-        # return contact
 
 
 async def remove_contact(contact_id: int, db: Session) -> Contact | None:

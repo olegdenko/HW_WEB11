@@ -10,7 +10,6 @@ import configparser
 
 from src.database.models import Base
 
-
 file_config = pathlib.Path(__file__).parent.parent.joinpath("src/conf/config.ini")
 config = configparser.ConfigParser()
 config.read(file_config)

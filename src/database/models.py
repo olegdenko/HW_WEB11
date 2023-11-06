@@ -32,7 +32,7 @@ class Contact(Base):
     last_name = Column(String(50), nullable=False)
     e_mail = Column(String(50), nullable=False)
     phone_number = Column(String(17), nullable=False)
-    born_date = Column(String, nullable=False)
+    born_date = Column(Date, nullable=False)
     description = Column(String(150), nullable=False)
     created_at = Column("created_at", DateTime, default=func.now())
 
