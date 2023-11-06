@@ -1,13 +1,13 @@
 from typing import List
+from fastapi.templating import Jinja2Templates
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
-
+from src.database.models import Contact
 from src.database.db import get_db
 from src.schemas import (
     ContactModel,
     ContactUpdate,
-    ContactStatusUpdate,
     ContactResponse,
 )
 from src.repository import contacts as repository_contacts
@@ -47,7 +47,7 @@ async def search_contact(
     return contact
 
 
-@router.get("/upcoming_birthdays", response_model=List[ContactResponse])
+@router.get("/upcoming_birthdays/", response_model=List[ContactResponse])
 async def read_upcoming_birthdays(db: Session = Depends(get_db)):
     contacts = await repository_contacts.get_upcoming_birthdays(db)
     if contacts is None:

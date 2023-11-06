@@ -20,11 +20,23 @@ async def get_contacts(skip: int, limit: int, db: Session) -> List[Contact]:
 async def get_upcoming_birthdays(db: Session) -> List[ContactResponse]:
     today = datetime.now()
     end_date = today + timedelta(days=7)
-    return (
+    contacts = (
         db.query(Contact)
         .filter(Contact.born_date >= today, Contact.born_date <= end_date)
         .all()
     )
+    return [
+        ContactResponse(
+            id=contact.id,
+            name=contact.name,
+            last_name=contact.last_name,
+            e_mail=contact.e_mail,
+            phone_number=contact.phone_number,
+            born_date=contact.born_date,
+            description=contact.description,
+        )
+        for contact in contacts
+    ]
 
 
 async def get_contact(contact_id: int, db: Session) -> Contact:
